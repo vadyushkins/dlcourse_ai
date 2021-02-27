@@ -56,24 +56,22 @@ class KNN:
         return dists
 
     def compute_distances_one_loop(self, X):
-        '''
+        """
         Computes L1 distance from every sample of X to every training sample
         Vectorizes some of the calculations, so only 1 loop is used
 
         Arguments:
         X, np array (num_test_samples, num_features) - samples to run
-        
+
         Returns:
-        dists, np array (num_test_samples, num_train_samples) - array
-           with distances between each test and each train sample
-        '''
+        dists, np array (num_test_samples, num_train_samples) - array with distances between each test and each train sample
+        """
         num_train = self.train_X.shape[0]
         num_test = X.shape[0]
         dists = np.zeros((num_test, num_train), np.float32)
         for i_test in range(num_test):
-            # TODO: Fill the whole row of dists[i_test]
-            # without additional loops or list comprehensions
-            pass
+            dists[i_test] = np.sum(np.abs(X[i_test] - self.train_X), axis=1)
+        return dists
 
     def compute_distances_no_loops(self, X):
         '''
