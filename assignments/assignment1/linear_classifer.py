@@ -120,9 +120,9 @@ class LinearSoftmaxClassifier():
 
     def fit(self, X, y, batch_size=100, learning_rate=1e-7, reg=1e-5,
             epochs=1):
-        '''
+        """
         Trains linear classifier
-        
+
         Arguments:
           X, np array (num_samples, num_features) - training data
           y, np array of int (num_samples) - labels
@@ -130,7 +130,7 @@ class LinearSoftmaxClassifier():
           learning_rate, float - learning rate for gradient descent
           reg, float - L2 regularization strength
           epochs, int - number of epochs
-        '''
+        """
 
         num_train = X.shape[0]
         num_features = X.shape[1]
@@ -145,12 +145,14 @@ class LinearSoftmaxClassifier():
             sections = np.arange(batch_size, num_train, batch_size)
             batches_indices = np.array_split(shuffled_indices, sections)
 
-            # TODO implement generating batches from indices
-            # Compute loss and gradients
-            # Apply gradient to weights using learning rate
-            # Don't forget to add both cross-entropy loss
-            # and regularization!
-            raise Exception("Not implemented!")
+            for i in batches_indices:
+                loss_pred, gradient_pred = linear_softmax(X[i], self.W, y[i])
+                loss_reg, gradient_reg = l2_regularization(self.W, reg)
+                loss, gradient = loss_pred + loss_reg, gradient_pred + gradient_reg
+
+                self.W -= gradient * learning_rate
+
+                loss_history.append(loss)
 
             # end
             print("Epoch %i, loss: %f" % (epoch, loss))
@@ -158,19 +160,19 @@ class LinearSoftmaxClassifier():
         return loss_history
 
     def predict(self, X):
-        '''
+        """
         Produces classifier predictions on the set
-       
+
         Arguments:
           X, np array (test_samples, num_features)
 
         Returns:
           y_pred, np.array of int (test_samples)
-        '''
+        """
         y_pred = np.zeros(X.shape[0], dtype=np.int)
 
-        # TODO Implement class prediction
-        # Your final implementation shouldn't have any loops
-        raise Exception("Not implemented!")
+        probabilities = softmax(np.dot(X, self.W))
+
+        y_pred = np.argmax(probabilities, axis=-1)
 
         return y_pred
