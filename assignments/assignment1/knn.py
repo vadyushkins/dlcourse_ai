@@ -88,39 +88,37 @@ class KNN:
         num_train = self.train_X.shape[0]
         num_test = X.shape[0]
         # Using float32 to to save memory - the default is float64
-        dists = np.abs(X[:, True] - self.train_X).sum(axis=2, dtype=np.float32)
+        dists = np.abs(X[:, None] - self.train_X).sum(axis=2, dtype=np.float32)
         return dists
 
     def predict_labels_binary(self, dists):
-        '''
+        """
         Returns model predictions for binary classification case
-        
+
         Arguments:
-        dists, np array (num_test_samples, num_train_samples) - array
-           with distances between each test and each train sample
+        dists, np array (num_test_samples, num_train_samples) - array with distances between each test and each train sample
 
         Returns:
-        pred, np array of bool (num_test_samples) - binary predictions 
-           for every test sample
-        '''
+        pred, np array of bool (num_test_samples) - binary predictions for every test sample
+        """
         num_test = dists.shape[0]
         pred = np.zeros(num_test, np.bool)
         for i in range(num_test):
-            # TODO: Implement choosing best class based on k
-            # nearest training samples
-            pass
+            indices = dists[i].argsort()[:self.k]  # sort in ascending order and select the first k indices
+            occurrences = np.bincount(self.train_y[indices])  # count number of occurrences of each class label
+            pred[i] = np.argmax(occurrences)  # select the label with the largest number of occurrences
         return pred
 
     def predict_labels_multiclass(self, dists):
         '''
         Returns model predictions for multi-class classification case
-        
+
         Arguments:
         dists, np array (num_test_samples, num_train_samples) - array
            with distances between each test and each train sample
 
         Returns:
-        pred, np array of int (num_test_samples) - predicted class index 
+        pred, np array of int (num_test_samples) - predicted class index
            for every test sample
         '''
         num_test = dists.shape[0]
