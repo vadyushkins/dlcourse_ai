@@ -13,18 +13,17 @@ class KNN:
         self.train_y = y
 
     def predict(self, X, num_loops=0):
-        '''
+        """
         Uses the KNN model to predict clases for the data samples provided
-        
+
         Arguments:
-        X, np array (num_samples, num_features) - samples to run
-           through the model
-        num_loops, int - which implementation to use
+        - X, np array (num_samples, num_features) - samples to run through the model
+        - num_loops, int - which implementation to use
 
         Returns:
         predictions, np array of ints (num_samples) - predicted class
            for each sample
-        '''
+        """
         if num_loops == 0:
             dists = self.compute_distances_no_loops(X)
         elif num_loops == 1:
@@ -38,24 +37,23 @@ class KNN:
             return self.predict_labels_multiclass(dists)
 
     def compute_distances_two_loops(self, X):
-        '''
+        """
         Computes L1 distance from every sample of X to every training sample
         Uses simplest implementation with 2 Python loops
 
         Arguments:
         X, np array (num_test_samples, num_features) - samples to run
-        
+
         Returns:
-        dists, np array (num_test_samples, num_train_samples) - array
-           with distances between each test and each train sample
-        '''
+        dists, np array (num_test_samples, num_train_samples) - array with distances between each test and each train sample
+        """
         num_train = self.train_X.shape[0]
         num_test = X.shape[0]
         dists = np.zeros((num_test, num_train), np.float32)
         for i_test in range(num_test):
             for i_train in range(num_train):
-                # TODO: Fill dists[i_test][i_train]
-                pass
+                dists[i_test, i_train] = np.sum(np.abs(np.abs(X[i_test] - self.train_X[i_train])))
+        return dists
 
     def compute_distances_one_loop(self, X):
         '''
