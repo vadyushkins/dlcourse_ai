@@ -110,22 +110,19 @@ class KNN:
         return pred
 
     def predict_labels_multiclass(self, dists):
-        '''
+        """
         Returns model predictions for multi-class classification case
 
         Arguments:
-        dists, np array (num_test_samples, num_train_samples) - array
-           with distances between each test and each train sample
+        dists, np array (num_test_samples, num_train_samples) - array with distances between each test and each train sample
 
         Returns:
-        pred, np array of int (num_test_samples) - predicted class index
-           for every test sample
-        '''
-        num_test = dists.shape[0]
+        pred, np array of int (num_test_samples) - predicted class index for every test sample
+        """
         num_test = dists.shape[0]
         pred = np.zeros(num_test, np.int)
         for i in range(num_test):
-            # TODO: Implement choosing best class based on k
-            # nearest training samples
-            pass
+            indices = dists[i].argsort()[:self.k]  # sort in ascending order and select the first k indices
+            occurrences = np.bincount(self.train_y[indices])  # count number of occurrences of each class label
+            pred[i] = np.argmax(occurrences)  # select the label with the largest number of occurrences
         return pred
