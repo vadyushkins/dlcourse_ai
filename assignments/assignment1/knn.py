@@ -5,6 +5,7 @@ class KNN:
     """
     K-neariest-neighbor classifier using L1 loss
     """
+
     def __init__(self, k=1):
         self.k = k
 
@@ -74,23 +75,21 @@ class KNN:
         return dists
 
     def compute_distances_no_loops(self, X):
-        '''
+        """
         Computes L1 distance from every sample of X to every training sample
         Fully vectorizes the calculations using numpy
 
         Arguments:
         X, np array (num_test_samples, num_features) - samples to run
-        
+
         Returns:
-        dists, np array (num_test_samples, num_train_samples) - array
-           with distances between each test and each train sample
-        '''
+        dists, np array (num_test_samples, num_train_samples) - array with distances between each test and each train sample
+        """
         num_train = self.train_X.shape[0]
         num_test = X.shape[0]
         # Using float32 to to save memory - the default is float64
-        dists = np.zeros((num_test, num_train), np.float32)
-        # TODO: Implement computing all distances with no loops!
-        pass
+        dists = np.abs(X[:, True] - self.train_X).sum(axis=2, dtype=np.float32)
+        return dists
 
     def predict_labels_binary(self, dists):
         '''
