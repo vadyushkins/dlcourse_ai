@@ -2,20 +2,22 @@ import numpy as np
 
 
 def softmax(predictions):
-    '''
+    """
     Computes probabilities from scores
 
     Arguments:
-      predictions, np array, shape is either (N) or (batch_size, N) -
-        classifier output
+      predictions, np array, shape is either (N) or (batch_size, N) - classifier output
 
     Returns:
-      probs, np array of the same shape as predictions - 
-        probability for every class, 0..1
-    '''
-    # TODO implement softmax
-    # Your final implementation shouldn't have any loops
-    raise Exception("Not implemented!")
+      probs, np array of the same shape as predictions - probability for every class, 0..1
+    """
+
+    if predictions.ndim == 1:
+        normalized_predictions = predictions - np.max(predictions)
+        return np.exp(normalized_predictions) / np.sum(np.exp(normalized_predictions))
+    else:
+        normalized_predictions = predictions - np.max(predictions, axis=1)[:, np.newaxis]
+        return np.exp(normalized_predictions) / np.sum(np.exp(normalized_predictions), axis=1)[:, np.newaxis]
 
 
 def cross_entropy_loss(probs, target_index):
