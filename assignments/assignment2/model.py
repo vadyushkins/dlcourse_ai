@@ -47,23 +47,15 @@ class TwoLayerNet:
         # TODO Compute loss and fill param gradients
         # by running forward and backward passes through the model
 
-        predictions = self.output_layer.forward(
-            self.relu.forward(
-                self.input_layer.forward(
-                    X
-                )
-            )
-        )
+        forward_input_layer = self.input_layer.forward(X)
+        forward_relu = self.relu.forward(forward_input_layer)
+        predictions = self.output_layer.forward(forward_relu)
 
         loss, dprediction = softmax_with_cross_entropy(predictions, y)
 
-        self.input_layer.backward(
-            self.relu.backward(
-                self.output_layer.backward(
-                    dprediction
-                )
-            )
-        )
+        backward_output_layer = self.output_layer.backward(dprediction)
+        backward_relu = self.relu.backward(backward_output_layer)
+        backward_input_layer = self.input_layer.backward(backward_relu)
 
         # After that, implement l2 regularization on all params
         # Hint: self.params() is useful again!
@@ -89,16 +81,11 @@ class TwoLayerNet:
         # Hint: some of the code of the compute_loss_and_gradients
         # can be reused
 
-        return np.argmax(
-            self.output_layer.forward(
-                self.relu.forward(
-                    self.input_layer.forward(
-                        X
-                    )
-                )
-            ),
-            axis=-1
-        )
+        forward_input_layer = self.input_layer.forward(X)
+        forward_relu = self.relu.forward(forward_input_layer)
+        predictions = self.output_layer.forward(forward_relu)
+
+        return np.argmax(predictions, axis=-1)
 
     def params(self):
         # TODO Implement aggregating all of the params
