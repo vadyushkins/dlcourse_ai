@@ -18,7 +18,15 @@ class TwoLayerNet:
         """
         self.reg = reg
         # TODO Create necessary layers
-        raise Exception("Not implemented!")
+        self.input_layer = FullyConnectedLayer(n_input, hidden_layer_size)
+        self.relu = ReLULayer()
+        self.output_layer = FullyConnectedLayer(hidden_layer_size, n_output)
+
+        self.W_in = self.input_layer.params()['W']
+        self.B_in = self.input_layer.params()['B']
+
+        self.W_out = self.output_layer.params()['W']
+        self.B_out = self.output_layer.params()['B']
 
     def compute_loss_and_gradients(self, X, y):
         """
@@ -33,14 +41,37 @@ class TwoLayerNet:
         # clear parameter gradients aggregated from the previous pass
         # TODO Set parameter gradient to zeros
         # Hint: using self.params() might be useful!
-        raise Exception("Not implemented!")
-        
+        for p in self.params().values():
+            p.grad.fill(0)
+
         # TODO Compute loss and fill param gradients
         # by running forward and backward passes through the model
-        
+
+        predictions = self.output_layer.forward(
+            self.relu.forward(
+                self.input_layer.forward(
+                    X
+                )
+            )
+        )
+
+        loss, dprediction = softmax_with_cross_entropy(predictions, y)
+
+        self.input_layer.backward(
+            self.relu.backward(
+                self.output_layer.backward(
+                    dprediction
+                )
+            )
+        )
+
         # After that, implement l2 regularization on all params
         # Hint: self.params() is useful again!
-        raise Exception("Not implemented!")
+
+        for p in self.params().values():
+            loss_l2, grad_l2 = l2_regularization(p.value, self.reg)
+            loss += loss_l2
+            p.grad += grad_l2
 
         return loss
 
@@ -57,16 +88,24 @@ class TwoLayerNet:
         # TODO: Implement predict
         # Hint: some of the code of the compute_loss_and_gradients
         # can be reused
-        pred = np.zeros(X.shape[0], np.int)
 
-        raise Exception("Not implemented!")
-        return pred
+        return np.argmax(
+            self.output_layer.forward(
+                self.relu.forward(
+                    self.input_layer.forward(
+                        X
+                    )
+                )
+            ),
+            axis=-1
+        )
 
     def params(self):
-        result = {}
-
         # TODO Implement aggregating all of the params
 
-        raise Exception("Not implemented!")
-
-        return result
+        return {
+            'W_in': self.W_in,
+            'B_in': self.B_in,
+            'W_out': self.W_out,
+            'B_out': self.B_out,
+        }
